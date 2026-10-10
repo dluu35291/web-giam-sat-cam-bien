@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hệ thống giám sát cảm biến</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        /* ================= HEADER ================= */
+
+        header {
+            background: #1d4ed8;
+            color: white;
+            padding: 25px;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            opacity: 0.9;
+        }
+
+        /* ================= CONTAINER ================= */
+
+        .container {
+            width: 94%;
+            max-width: 1400px;
+            margin: 25px auto;
+        }
+
+        /* ================= TOP BAR ================= */
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .clock {
+            font-weight: bold;
+        }
+
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 11px;
+            height: 11px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* ================= CARDS ================= */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+        }
+
+        .card-title {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .card-value {
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 7px;
+            color: #2563eb;
+        }
+
+        .card-unit {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        /* ================= CONTROLS ================= */
+
+        .control-box {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+        }
+
+        .control-row {
+            display: flex;
+            gap: 12px;
+align-items: center;
+            flex-wrap: wrap;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        select,
+        input {
+            padding: 10px 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        select:focus,
+        input:focus {
+            border-color: #2563eb;
+        }
+
+        button {
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            cursor: pointer;
+            color: white;
+            background: #2563eb;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-green {
+            background: #16a34a;
+        }
+
+        .btn-green:hover {
+            background: #15803d;
+        }
+
+        .btn-gray {
+            background: #64748b;
+        }
+
+        .btn-gray:hover {
+            background: #475569;
+        }
+
+        /* ================= TABLE ================= */
+
+        .table-box {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+            overflow-x: auto;
+        }
+
+        .table-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .table-title h2 {
+            font-size: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        th {
+            background: #1e40af;
+            color: white;
+            padding: 13px;
+            text-align: left;
+        }
+
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        /* ================= STATUS ================= */
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .normal {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* ================= PROGRESS ================= */
+
+        .progress-box {
+            margin-top: 10px;
+        }
+
+        .progress {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #2563eb;
+            transition: width 0.4s ease;
+}
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 1100px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 650px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                width: 95%;
+            }
+
+            header h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-content">
+        <h1>📊 HỆ THỐNG GIÁM SÁT CẢM BIẾN</h1>
+        <p>Theo dõi nhiệt độ, độ ẩm, ánh sáng và điện năng</p>
+    </div>
+</header>
+
+
+<div class="container">
+
+    <!-- ================= TOP BAR ================= -->
+
+    <div class="top-bar">
+
+        <div class="system-status">
+            <span class="status-dot"></span>
+            <span>Hệ thống đang hoạt động</span>
+        </div>
+
+        <div class="clock">
+            🕒 <span id="clock">--:--:--</span>
+        </div>
+
+    </div>
+
+
+    <!-- ================= CARDS ================= -->
+
+    <div class="cards">
+
+        <div class="card">
+            <div class="card-title">🌡️ NHIỆT ĐỘ</div>
+
+            <div class="card-value" id="temperature">
+                -- °C
+            </div>
+
+            <div class="card-unit">
+                Nhiệt độ môi trường
+            </div>
+
+            <div class="progress-box">
+                <div class="progress">
+                    <div
+                        class="progress-bar"
+                        id="temperatureBar">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="card-title">💧 ĐỘ ẨM</div>
+
+            <div class="card-value" id="humidity">
+                -- %
+            </div>
+
+            <div class="card-unit">
+                Độ ẩm môi trường
+            </div>
+
+            <div class="progress-box">
+                <div class="progress">
+                    <div
+                        class="progress-bar"
+                        id="humidityBar">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="card-title">💡 ÁNH SÁNG</div>
+
+            <div class="card-value" id="light">
+                -- Lux
+            </div>
+
+            <div class="card-unit">
+                Cường độ ánh sáng
+            </div>
+
+            <div class="progress-box">
+                <div class="progress">
+                    <div
+                        class="progress-bar"
+                        id="lightBar">
+                    </div>
+                </div>
+            </div>
+        </div>
+<div class="card">
+            <div class="card-title">⚡ CÔNG SUẤT</div>
+
+            <div class="card-value" id="power">
+                -- W
+            </div>
+
+            <div class="card-unit">
+                Công suất hiện tại
+            </div>
+
+            <div class="progress-box">
+                <div class="progress">
+                    <div
+                        class="progress-bar"
+                        id="powerBar">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="card-title">🔌 ĐIỆN ÁP</div>
+
+            <div class="card-value" id="voltage">
+                -- V
+            </div>
+
+            <div class="card-unit">
+                Điện áp hiện tại
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="card-title">⚙️ DÒNG ĐIỆN</div>
+
+            <div class="card-value" id="current">
+                -- A
+            </div>
+
+            <div class="card-unit">
+                Dòng điện hiện tại
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="card-title">🔋 ĐIỆN NĂNG</div>
+
+            <div class="card-value" id="energy">
+                -- kWh
+            </div>
+
+            <div class="card-unit">
+                Điện năng tiêu thụ
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="card-title">📈 HIỆU SUẤT</div>
+
+            <div class="card-value" id="efficiency">
+                -- %
+            </div>
+
+            <div class="card-unit">
+                Hiệu suất hệ thống
+            </div>
+
+            <div class="progress-box">
+                <div class="progress">
+                    <div
+                        class="progress-bar"
+                        id="efficiencyBar">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ================= CONTROL ================= -->
+
+    <div class="control-box">
+
+        <div class="control-row">
+
+            <label for="sensorSelect">
+                Cảm biến:
+            </label>
+
+            <select id="sensorSelect">
+                <option value="all">Tất cả</option>
+                <option value="Nhiệt độ">Nhiệt độ</option>
+                <option value="Độ ẩm">Độ ẩm</option>
+                <option value="Ánh sáng">Ánh sáng</option>
+                <option value="Điện áp">Điện áp</option>
+                <option value="Dòng điện">Dòng điện</option>
+                <option value="Công suất">Công suất</option>
+            </select>
+
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="🔎 Tìm kiếm..."
+            >
+
+
+            <button onclick="filterData()">
+                🔍 Lọc
+            </button>
+
+
+            <button
+                class="btn-green"
+onclick="exportCSV()">
+                📥 Xuất CSV
+            </button>
+
+
+            <button
+                class="btn-gray"
+                onclick="resetFilter()">
+                🔄 Đặt lại
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= TABLE ================= -->
+
+    <div class="table-box">
+
+        <div class="table-title">
+
+            <h2>📋 Dữ liệu cảm biến</h2>
+
+            <div>
+                Tổng số:
+                <strong id="totalData">0</strong>
+                dòng
+            </div>
+
+        </div>
+
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Thời gian</th>
+                    <th>Cảm biến</th>
+                    <th>Giá trị</th>
+                    <th>Đơn vị</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+
+
+            <tbody id="dataTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<footer>
+    © 2026 - Hệ thống giám sát cảm biến
+</footer>
+
+
+<script>
+
+"use strict";
+
+
+/* ==================================================
+   DỮ LIỆU
+================================================== */
+
+let sensorData = [];
+
+let energy = 12.45;
+
+
+/* ==================================================
+   HÀM TẠO THỜI GIAN
+================================================== */
+
+function getTime() {
+
+    const now = new Date();
+
+    return now.toLocaleTimeString("vi-VN");
+
+}
+
+
+/* ==================================================
+   HÀM TẠO DỮ LIỆU MẪU
+================================================== */
+
+function generateSensorData() {
+
+    const temperature =
+        Number((25 + Math.random() * 10).toFixed(1));
+
+    const humidity =
+        Number((50 + Math.random() * 30).toFixed(1));
+
+    const light =
+        Math.round(500 + Math.random() * 500);
+
+    const voltage =
+        Number((220 + Math.random() * 5).toFixed(1));
+
+    const current =
+        Number((1 + Math.random() * 3).toFixed(2));
+
+    const power =
+        Number((voltage * current).toFixed(1));
+
+    const efficiency =
+        Number((80 + Math.random() * 18).toFixed(1));
+
+
+    energy += power / 100000;
+
+
+    return {
+        temperature,
+        humidity,
+        light,
+        voltage,
+        current,
+        power,
+        efficiency,
+        energy
+    };
+
+}
+
+
+/* ==================================================
+   TRẠNG THÁI
+================================================== */
+
+function getStatus(sensor, value) {
+
+    if (sensor === "Nhiệt độ") {
+
+        if (value >= 35) {
+            return ["Nguy hiểm", "danger"];
+        }
+
+        if (value >= 30) {
+            return ["Cảnh báo", "warning"];
+        }
+
+        return ["Bình thường", "normal"];
+    }
+
+
+    if (sensor === "Độ ẩm") {
+
+        if (value >= 85) {
+            return ["Cảnh báo", "warning"];
+        }
+
+        return ["Bình thường", "normal"];
+    }
+
+
+    if (sensor === "Điện áp") {
+if (value < 210 || value > 240) {
+            return ["Cảnh báo", "warning"];
+        }
+
+        return ["Bình thường", "normal"];
+    }
+
+
+    if (sensor === "Công suất") {
+
+        if (value > 900) {
+            return ["Cảnh báo", "warning"];
+        }
+
+        return ["Bình thường", "normal"];
+    }
+
+
+    return ["Bình thường", "normal"];
+
+}
+
+
+/* ==================================================
+   CẬP NHẬT CARD
+================================================== */
+
+function updateDashboard(data) {
+
+    document.getElementById("temperature").textContent =
+        data.temperature + " °C";
+
+    document.getElementById("humidity").textContent =
+        data.humidity + " %";
+
+    document.getElementById("light").textContent =
+        data.light + " Lux";
+
+    document.getElementById("voltage").textContent =
+        data.voltage + " V";
+
+    document.getElementById("current").textContent =
+        data.current + " A";
+
+    document.getElementById("power").textContent =
+        data.power + " W";
+
+    document.getElementById("energy").textContent =
+        data.energy.toFixed(3) + " kWh";
+
+    document.getElementById("efficiency").textContent =
+        data.efficiency + " %";
+
+
+    /* Progress */
+
+    document.getElementById("temperatureBar").style.width =
+        Math.min(data.temperature / 50 * 100, 100) + "%";
+
+    document.getElementById("humidityBar").style.width =
+        Math.min(data.humidity, 100) + "%";
+
+    document.getElementById("lightBar").style.width =
+        Math.min(data.light / 1000 * 100, 100) + "%";
+
+    document.getElementById("powerBar").style.width =
+        Math.min(data.power / 1000 * 100, 100) + "%";
+
+    document.getElementById("efficiencyBar").style.width =
+        Math.min(data.efficiency, 100) + "%";
+
+}
+
+
+/* ==================================================
+   THÊM DỮ LIỆU VÀO BẢNG
+================================================== */
+
+function addSensorRows(data) {
+
+    sensorData.unshift({
+        time: getTime(),
+        sensor: "Nhiệt độ",
+        value: data.temperature,
+        unit: "°C"
+    });
+
+    sensorData.unshift({
+        time: getTime(),
+        sensor: "Độ ẩm",
+        value: data.humidity,
+        unit: "%"
+    });
+
+    sensorData.unshift({
+        time: getTime(),
+        sensor: "Ánh sáng",
+        value: data.light,
+        unit: "Lux"
+    });
+
+    sensorData.unshift({
+        time: getTime(),
+        sensor: "Điện áp",
+        value: data.voltage,
+        unit: "V"
+    });
+
+    sensorData.unshift({
+        time: getTime(),
+        sensor: "Dòng điện",
+        value: data.current,
+        unit: "A"
+    });
+
+    sensorData.unshift({
+        time: getTime(),
+        sensor: "Công suất",
+        value: data.power,
+        unit: "W"
+    });
+
+
+    /* Giữ tối đa 100 dòng */
+
+    if (sensorData.length > 100) {
+        sensorData =
+            sensorData.slice(0, 100);
+    }
+
+}
+
+
+/* ==================================================
+HIỂN THỊ BẢNG
+================================================== */
+
+function renderTable() {
+
+    const table =
+        document.getElementById("dataTable");
+
+    const sensor =
+        document.getElementById("sensorSelect").value;
+
+    const search =
+        document.getElementById("searchInput")
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    table.innerHTML = "";
+
+
+    let visibleCount = 0;
+
+
+    sensorData.forEach(row => {
+
+        const matchesSensor =
+            sensor === "all" ||
+            row.sensor === sensor;
+
+
+        const matchesSearch =
+            row.sensor.toLowerCase().includes(search) ||
+            String(row.value).includes(search) ||
+            row.time.includes(search);
+
+
+        if (!matchesSensor || !matchesSearch) {
+            return;
+        }
+
+
+        const status =
+            getStatus(
+                row.sensor,
+                Number(row.value)
+            );
+
+
+        const tr =
+            document.createElement("tr");
+
+
+        tr.innerHTML = `
+            <td>${escapeHTML(row.time)}</td>
+
+            <td>${escapeHTML(row.sensor)}</td>
+
+            <td>${escapeHTML(String(row.value))}</td>
+
+            <td>${escapeHTML(row.unit)}</td>
+
+            <td>
+                <span class="status ${status[1]}">
+                    ${status[0]}
+                </span>
+            </td>
+        `;
+
+
+        table.appendChild(tr);
+
+        visibleCount++;
+
+    });
+
+
+    document.getElementById("totalData")
+        .textContent = visibleCount;
+
+
+    if (visibleCount === 0) {
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="5"
+                    style="text-align:center;padding:30px;">
+                    Không tìm thấy dữ liệu
+                </td>
+            </tr>
+        `;
+
+    }
+
+}
+
+
+/* ==================================================
+   LỌC
+================================================== */
+
+function filterData() {
+
+    renderTable();
+
+}
+
+
+/* ==================================================
+   ĐẶT LẠI BỘ LỌC
+================================================== */
+
+function resetFilter() {
+
+    document.getElementById("sensorSelect")
+        .value = "all";
+
+    document.getElementById("searchInput")
+        .value = "";
+
+    renderTable();
+
+}
+
+
+/* ==================================================
+   ESCAPE HTML
+================================================== */
+
+function escapeHTML(value) {
+
+    return value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* ==================================================
+   XUẤT CSV
+================================================== */
+
+function exportCSV() {
+
+    const sensor =
+        document.getElementById("sensorSelect").value;
+
+    const search =
+        document.getElementById("searchInput")
+        .value
+        .toLowerCase()
+.trim();
+
+
+    const rows = sensorData.filter(row => {
+
+        const matchesSensor =
+            sensor === "all" ||
+            row.sensor === sensor;
+
+        const matchesSearch =
+            row.sensor.toLowerCase().includes(search) ||
+            String(row.value).includes(search) ||
+            row.time.includes(search);
+
+        return matchesSensor && matchesSearch;
+
+    });
+
+
+    if (rows.length === 0) {
+
+        alert("Không có dữ liệu để xuất.");
+
+        return;
+    }
+
+
+    let csv =
+        "Thời gian,Cảm biến,Giá trị,Đơn vị,Trạng thái\n";
+
+
+    rows.forEach(row => {
+
+        const status =
+            getStatus(
+                row.sensor,
+                Number(row.value)
+            )[0];
+
+
+        const values = [
+            row.time,
+            row.sensor,
+            row.value,
+            row.unit,
+            status
+        ];
+
+
+        const line =
+            values.map(value => {
+
+                const text =
+                    String(value)
+                    .replace(/"/g, '""');
+
+                return `"${text}"`;
+
+            }).join(",");
+
+
+        csv += line + "\n";
+
+    });
+
+
+    /* BOM để Excel hiển thị tiếng Việt */
+
+    const blob =
+        new Blob(
+            ["\ufeff" + csv],
+            {
+                type: "text/csv;charset=utf-8;"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(blob);
+
+
+    const link =
+        document.createElement("a");
+
+
+    link.href = url;
+
+    link.download =
+        "du_lieu_cam_bien.csv";
+
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+
+
+    URL.revokeObjectURL(url);
+
+}
+
+
+/* ==================================================
+   ĐỒNG HỒ
+================================================== */
+
+function updateClock() {
+
+    const now =
+        new Date();
+
+
+    document.getElementById("clock")
+        .textContent =
+        now.toLocaleTimeString("vi-VN");
+
+}
+
+
+setInterval(updateClock, 1000);
+
+updateClock();
+
+
+/* ==================================================
+   CẬP NHẬT HỆ THỐNG
+================================================== */
+
+function updateSystem() {
+
+    const data =
+        generateSensorData();
+
+
+    updateDashboard(data);
+
+    addSensorRows(data);
+
+    renderTable();
+
+}
+
+
+/* ==================================================
+   KHỞI ĐỘNG
+================================================== */
+
+try {
+
+    for (let i = 0; i < 5; i++) {
+
+        updateSystem();
+
+    }
+
+    /*
+       Cập nhật dữ liệu mỗi 3 giây
+    */
+
+    setInterval(updateSystem, 3000);
+
+}
+catch (error) {
+
+    console.error(
+        "Lỗi hệ thống:",
+        error
+    );
+
+    alert(
+        "Có lỗi khi khởi động hệ thống. " +
+        "Hãy kiểm tra Console của trình duyệt."
+    );
+
+}
+
+</script>
+
+</body>
+</html>
